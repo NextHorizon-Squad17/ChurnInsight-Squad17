@@ -17,14 +17,14 @@ Este vídeo não é apenas um tutorial; é um **Guia de Carreira**. Ele cobre o 
 2.  **Integração Real:** Mostra como conectar a limpeza de dados da Stephanie e o modelo do Vlademir na API do Philipe sem "quebrar" tudo.
 3.  **Diferencial Competitivo:** Juízes técnicos procuram por *reprodutibilidade*. Seguir esses passos garante que nosso projeto rode em qualquer máquina, eliminando o efeito "na minha máquina funciona".
 
-###  Vantagens para a SUA Carreira (O Salto Salarial)
+### 💼 Vantagens para a SUA Carreira (O Salto Salarial)
 1.  **Full Stack Data Science:** Você deixará de ser apenas alguém que analisa dados para ser alguém que constrói **Sistemas de Inteligência Artificial**.
 2.  **O Skill Mais Quente do Mercado:** Engenheiros que dominam MLOps (ZenML, MLflow, Pipelines) são os profissionais mais bem pagos e difíceis de encontrar hoje.
 3.  **Portfólio de Elite:** Aplicar o conhecimento desse vídeo no nosso projeto vai gerar um case no seu GitHub que vale mais do que 10 certificados teóricos.
 
 ---
 
-##  O que observar no vídeo (Dicas de Estudo)
+## 📝 O que observar no vídeo (Dicas de Estudo)
 
 Não precisa decorar cada linha de código, mas foque nestes conceitos:
 
@@ -36,8 +36,8 @@ Não precisa decorar cada linha de código, mas foque nestes conceitos:
 
 ---
 
-###  Chamada para Ação
+### 📢 Chamada para Ação
 Assistam com calma, façam anotações e tragam dúvidas para o grupo.
 **O objetivo não é apenas ganhar o Hackathon, é sair dele em um outro patamar profissional.**
 
-Vamos codar o futuro! 
+Vamos codar o futuro! 👊
