@@ -6,6 +6,55 @@
 
 ---
 
+
+## 🗓️ SPRINT 02: Demo Report & Review
+**Data:** 18 de Dezembro de 2025 | 
+**Status:** Concluído com Ressalvas
+
+**Facilitador (Remoto):** Philipe Oliveira
+
+**Participantes:** Felipe (Backend), Romulo (Frontend), Stephanie e Vlademir (Data Science)
+
+---
+
+
+### 📢 Resumo Executivo
+A equipe realizou a apresentação da primeira versão funcional da interface e da API simulada. O Frontend entregou uma experiência visual de alto impacto ("Deep Space" theme), e o Backend garantiu o contrato de dados via Mock. O time de Data Science iniciou a análise da matéria-prima (dados).
+
+### 📦 Entregas Realizadas
+1.  **Frontend (Romulo):**
+    * **Protótipo Funcional:** Interface SPA construída com *Vanilla JS (ES6+)* e *Tailwind CSS*.
+    * **UX/UI:** Implementação de Glassmorphism, Dark Mode nativo e velocímetros SVG dinâmicos para medir "Humor do Cliente".
+    * **Performance:** Zero dependências de build (No NPM), focando em carregamento instantâneo.
+2.  **Backend (Felipe/Lucas/Raiuri):**
+    * **API Mock:** Endpoints retornando JSON estruturado conforme DTOs definidos.
+    * **Repositório:** Código enviado para a organização GitHub.
+3.  **Data Science (Stephanie/Vlademir):**
+    * **Data Check:** Validação de acesso aos dados brutos e início do planejamento de EDA (Análise Exploratória).
+
+### ⚠️ Pontos de Atenção & Compliance (Action Items)
+1.  **Ocorrência:** O time de Backend reportou uso do **Java 25**, entretanto O Tech Lead Philipe definiu erroneamente na ADR-004 o uso do Java 17 LTS.
+    * **Ação Corretiva:** Realizar correção na ADR-004 para **Java 25**.
+2.  **Fluxo de Git (Bypass de PR):**
+    * **Ocorrência:** Commit direto na `main` devido a erros no IntelliJ.
+    * **Ação:** Tech Lead auxiliará na configuração da IDE para garantir o fluxo correto de Pull Requests na próxima task.
+3.  **Tech Debt Frontend:**
+    * A solução atual é Vanilla JS. A migração para **React/Vite** permanece no backlog para garantir escalabilidade de componentes futuros.
+
+### 🛠️ Inventário de Ferramentas Atualizado (Snapshot 18/12)
+*Registro oficial das tecnologias ativas no projeto:*
+
+* **Gestão:** GitHub Projects (Kanban), Google AI Studio (Gemini 3 PRO).
+* **Backend:** IntelliJ IDEA, Java 25, Spring Boot, Maven, Postman/Insomnia.
+* **Frontend:** VS Code, JavaScript (ES6+), Tailwind CSS (CDN), Live Server.
+* **Data Science:** Google Colab, Pandas, NumPy, Scikit-learn, Matplotlib/Seaborn.
+* **DevOps/Infra:** Git, GitHub Organizations, Docker (Planejado).
+
+---
+
+
+
+
 ## 🗓️ SPRINT 01: Planning & Arquitetura Híbrida
 **Data:** 15 de Dezembro de 2025 | **Fase:** Definição Arquitetural & Início do Code
 
