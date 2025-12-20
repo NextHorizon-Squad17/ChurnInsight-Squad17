@@ -1,5 +1,5 @@
 ﻿#  Daily Scrum Report - 19/12/2025
-**Duração:** N/A (Consolidado)
+**Duração:** 2h 30min (Consolidado)
 **Facilitador:** Philipe Oliveira (Tech Lead)
 
 ###  Check-in de Equipe & Papéis (Atualização Tática)

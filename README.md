@@ -96,7 +96,7 @@ Utilizamos LLMs para contextualizar o dado numérico.
 | Componente | Tecnologia | Justificativa Arquitetural |
 |------------|------------|---------------------------|
 | **API Gateway** | Spring Cloud Gateway | Controle de tráfego, Rate Limiting e Circuit Breaker centralizado. |
-| **Core API** | Java 17 + Spring Boot 3 | Robustez tipada, ecossistema maduro e integração nativa OCI. |
+| **Core API** | Java 25 + Spring Boot 3 | Robustez tipada, ecossistema maduro e integração nativa OCI. |
 | **ML Service** | Python 3.11 + FastAPI | Performance assíncrona para inferência e facilidade com bibliotecas de Data Science. |
 
 ### Infraestrutura & Dados
@@ -113,7 +113,7 @@ Utilizamos LLMs para contextualizar o dado numérico.
 
 ### Pré-requisitos
 
-- Java 17+ (OpenJDK)
+- Java 25+ (OpenJDK)
 - Python 3.10+
 - Node.js 18+ LTS
 - Docker (Opcional)
