@@ -1,0 +1,47 @@
+name: CD - Deploy ChurnInsight AI
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/churninsight-ai:latest
+
+      - name: Deploy on OCI VM
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.OCI_HOST }}
+          username: ${{ secrets.OCI_USER }}
+          key: ${{ secrets.OCI_SSH_KEY }}
+          script: |
+            docker pull ghcr.io/${{ github.repository_owner }}/churninsight-ai:latest
+            docker stop churninsight-ai || true
+            docker rm churninsight-ai || true
+            docker run -d \
+              --name churninsight-ai \
+              -p 8000:8000 \
+              --env-file /opt/churninsight/.env \
+              ghcr.io/${{ github.repository_owner }}/churninsight-ai:latest
