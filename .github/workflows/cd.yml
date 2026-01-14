@@ -13,6 +13,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set lowercase repository owner
+        run: |
+          echo "REPO_OWNER_LOWER=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -28,20 +32,24 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/churninsight-ai:latest
+          tags: ghcr.io/${{ env.REPO_OWNER_LOWER }}/churninsight-ai:latest
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.OCI_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.OCI_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy on OCI VM
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.OCI_HOST }}
-          username: ${{ secrets.OCI_USER }}
-          key: ${{ secrets.OCI_SSH_KEY }}
-          script: |
-            docker pull ghcr.io/${{ github.repository_owner }}/churninsight-ai:latest
+        run: |
+          ssh ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }} << EOF
+            docker pull ghcr.io/${{ env.REPO_OWNER_LOWER }}/churninsight-ai:latest
             docker stop churninsight-ai || true
             docker rm churninsight-ai || true
             docker run -d \
               --name churninsight-ai \
               -p 8000:8000 \
               --env-file /opt/churninsight/.env \
-              ghcr.io/${{ github.repository_owner }}/churninsight-ai:latest
+              ghcr.io/${{ env.REPO_OWNER_LOWER }}/churninsight-ai:latest
+          EOF
