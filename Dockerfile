@@ -11,10 +11,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 2. Copia a API (da pasta api para a raiz do container)
-COPY api/main.py .
+COPY data-science/api/main.py .
 
 # 3. Copia o Modelo (da pasta model para a raiz do container)
-COPY model/churn_model_final.pkl .
+COPY data-science/model/churn_model_final.pkl .
 
 # 4. Copia o .env (da raiz data-science)
 COPY .env .
