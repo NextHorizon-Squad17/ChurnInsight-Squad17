@@ -1,6 +1,5 @@
-name: Sanity Check
+name: 🛡️ Nexus Sanity Check
 
-# Quando rodar? Em todo Push na main ou Pull Request
 on:
   push:
     branches: [ "main" ]
@@ -8,33 +7,26 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # JOB 1: DATA SCIENCE INTEGRITY
-  data-science-build:
+  data-science-validation:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout do Código
         uses: actions/checkout@v4
 
-      - name: 🐳 Build Docker (Data Science)
-        # Tenta construir a imagem. Se o Dockerfile estiver errado, falha aqui.
+      - name: ⚙️ Configurar Segredos Fakes
+        # Cria um .env dummy apenas para o Docker não reclamar da falta do arquivo
         run: |
           cd data-science
-          docker build -t churn-api-test .
+          echo "GOOGLE_API_KEY=ci_test_dummy_key" > .env
 
-      - name: 🐍 Setup Python (Para testes unitários)
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: 📦 Instalar Dependências e Rodar Pytest
-        # Roda os testes unitários (test_api.py) para garantir que a lógica não quebrou
+      - name: 🐳 Build & Test (Via Docker)
+        # Estratégia Enterprise: Constrói o container e roda os testes DENTRO dele.
+        # Se o teste falhar, o docker run retorna erro e quebra o pipeline (como deve ser).
         run: |
           cd data-science
-          pip install -r requirements.txt
-          pytest
-
-  # JOB 2: BACKEND INTEGRITY (Placeholder para o Java)
-  # backend-build:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     ... (Configuração futura do Java)
+          
+          echo "1. Construindo Imagem..."
+          docker build -t churn-ci-image .
+          
+          echo "2. Executando Pytest dentro do Container..."
+          docker run --rm churn-ci-image pytest -v
