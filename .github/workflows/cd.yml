@@ -46,13 +46,13 @@ jobs:
 
       - name: Deploy on OCI VM
         run: |
-          ssh ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }} << EOF
+          ssh -T ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }} << EOF
             docker pull ghcr.io/${{ env.REPO_OWNER_LOWER }}/churninsight-ai:latest
             docker stop churninsight-ai || true
             docker rm churninsight-ai || true
             docker run -d \
               --name churninsight-ai \
               -p 8000:8000 \
-              --env-file /opt/churninsight/.env \
+              --env-file /opt/churn-insight/.env \
               ghcr.io/${{ env.REPO_OWNER_LOWER }}/churninsight-ai:latest
           EOF
