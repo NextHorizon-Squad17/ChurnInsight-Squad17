@@ -16,10 +16,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set lowercase repository owner
-        run: |
-          echo "REPO_OWNER_LOWER=${github.repository,,}" >> $GITHUB_ENV
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -35,7 +31,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ env.REPO_OWNER_LOWER }}/churninsight-ai:latest
+          tags: ghcr.io/churnInsight-squad17/churninsight-ai:latest
 
       - name: Setup SSH
         run: |
@@ -48,12 +44,12 @@ jobs:
         run: |
           ssh -T ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }} << EOF
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-            docker pull ghcr.io/${{ env.REPO_OWNER_LOWER }}/churninsight-ai:latest
+            docker pull ghcr.io/churnInsight-squad17/churninsight-ai:latest
             docker stop churninsight-ai || true
             docker rm churninsight-ai || true
             docker run -d \
               --name churninsight-ai \
               -p 8000:8000 \
               --env-file /opt/churn-insight/.env \
-              ghcr.io/${{ env.REPO_OWNER_LOWER }}/churninsight-ai:latest
+              ghcr.io/churnInsight-squad17/churninsight-ai:latest
           EOF
