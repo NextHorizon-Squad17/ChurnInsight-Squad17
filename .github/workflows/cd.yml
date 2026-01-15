@@ -18,7 +18,7 @@ jobs:
 
       - name: Set lowercase repository owner
         run: |
-          echo "REPO_OWNER_LOWER=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+          echo "REPO_OWNER_LOWER=${github.repository,,}" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -47,6 +47,7 @@ jobs:
       - name: Deploy on OCI VM
         run: |
           ssh -T ${{ secrets.OCI_USER }}@${{ secrets.OCI_HOST }} << EOF
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
             docker pull ghcr.io/${{ env.REPO_OWNER_LOWER }}/churninsight-ai:latest
             docker stop churninsight-ai || true
             docker rm churninsight-ai || true
