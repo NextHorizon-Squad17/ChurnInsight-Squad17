@@ -8,17 +8,18 @@ import google.genai as genai
 from google.genai.types import GenerateContentConfig
 from dotenv import load_dotenv
 
-# 1. Configuração Inicial
 load_dotenv()
 app = FastAPI(title="ChurnInsight Intelligence API", version="2.0 - Full Features")
 
-# Carregar API Key
+EXCEL_PATH = "Telco_customer_churn.xlsx"
+
 GEMINI_KEY = os.getenv("GOOGLE_API_KEY")
+
 if not GEMINI_KEY:
     print("⚠️ AVISO: GOOGLE_API_KEY não encontrada no .env")
 
-# 2. Modelo ML
 MODEL_PATH = "churn_model_final.pkl"
+
 try:
     with open(MODEL_PATH, "rb") as f:
         pipeline = pickle.load(f)
@@ -27,7 +28,6 @@ except FileNotFoundError:
     print(f"⚠️ Modelo não encontrado: {MODEL_PATH}")
     pipeline = None
 
-# 3. Contrato Pydantic COMPLETO (Baseado no Dataset Original)
 class CustomerData(BaseModel):
     # Dados Pessoais
     Gender: str
@@ -60,7 +60,6 @@ class CustomerData(BaseModel):
     # Se o modelo foi treinado sem eles (devido ao drop), não fará mal enviar.
     # Mas baseado no seu erro, ele pediu EXPLICITAMENTE as colunas abaixo.
 
-# 4. Função GenAI
 def generate_retention_plan(churn_prob, customer_profile):
     if not GEMINI_KEY:
         return "Plano indisponível (API Key não configurada)."
@@ -95,7 +94,7 @@ def generate_retention_plan(churn_prob, customer_profile):
     except Exception as e:
         return f"Erro GenAI: {str(e)}"
 
-# 5. Endpoint
+
 @app.post("/predict")
 def predict_churn(data: CustomerData):
     if pipeline is None:
@@ -151,9 +150,31 @@ def predict_churn(data: CustomerData):
         }
 
     except Exception as e:
-        # Log de erro detalhado para debug
         print(f"ERRO: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+    
+class CustomerRequest(BaseModel):
+    customer_id: str
+
+def load_customers():
+    try:
+        return pd.read_excel(EXCEL_PATH)
+    except Exception as e:
+        raise RuntimeError(f"Erro ao ler planilha: {e}")
+
+@app.post("/customers")
+def get_customer(request: CustomerRequest):
+    df = load_customers()
+
+    customer = df[df["CustomerID"] == request.customer_id]
+
+    if customer.empty:
+        raise HTTPException(
+            status_code=404,
+            detail="CustomerID não encontrado"
+        )
+
+    return customer.iloc[0].to_dict()
 
 @app.get("/health")
 def health_check():
