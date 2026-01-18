@@ -94,35 +94,58 @@ def generate_retention_plan(churn_prob, customer_profile):
     except Exception as e:
         return f"Erro GenAI: {str(e)}"
 
+class CustomerRequest(BaseModel):
+    customer_id: str
+
+def load_customers():
+    try:
+        return pd.read_excel(EXCEL_PATH)
+    except Exception as e:
+        raise RuntimeError(f"Erro ao ler planilha: {e}")
+
+def get_customer_by_id(customer_id: str) -> dict:
+    df = load_customers()
+
+    customer = df[df["CustomerID"] == customer_id]
+
+    if customer.empty:
+        raise HTTPException(
+            status_code=404,
+            detail="CustomerID não encontrado"
+        )
+
+    return customer.iloc[0].to_dict()
 
 @app.post("/predict")
-def predict_churn(data: CustomerData):
+def predict_churn(request: CustomerRequest):
     if pipeline is None:
         raise HTTPException(status_code=500, detail="Modelo ML não carregado.")
 
     try:
+        customer = get_customer_by_id(request.customer_id)
+
         # Mapeamento EXATO para o nome das colunas que o modelo (pandas) espera.
         # Os nomes à esquerda DEVEM ser iguais aos do dataset de treino original.
         input_data = {
-            'Gender': [data.Gender],
-            'Senior Citizen': [data.SeniorCitizen], # Espaço importante
-            'Partner': [data.Partner],
-            'Dependents': [data.Dependents],
-            'Tenure Months': [data.TenureMonths],   # Espaço importante
-            'Phone Service': [data.PhoneService],   # Espaço importante
-            'Multiple Lines': [data.MultipleLines], # Espaço importante
-            'Internet Service': [data.InternetService],
-            'Online Security': [data.OnlineSecurity],
-            'Online Backup': [data.OnlineBackup],
-            'Device Protection': [data.DeviceProtection],
-            'Tech Support': [data.TechSupport],
-            'Streaming TV': [data.StreamingTV],
-            'Streaming Movies': [data.StreamingMovies],
-            'Contract': [data.Contract],
-            'Paperless Billing': [data.PaperlessBilling],
-            'Payment Method': [data.PaymentMethod],
-            'Monthly Charges': [data.MonthlyCharges],
-            'TotalCharges': [data.TotalCharges]
+            'Gender': [customer['Gender']],
+            'Senior Citizen': [customer['Senior Citizen']], # Espaço importante
+            'Partner': [customer['Partner']],
+            'Dependents': [customer['Dependents']],
+            'Tenure Months': [customer['Tenure Months']],   # Espaço importante
+            'Phone Service': [customer['Phone Service']],   # Espaço importante
+            'Multiple Lines': [customer['Multiple Lines']], # Espaço importante
+            'Internet Service': [customer['Internet Service']],
+            'Online Security': [customer['Online Security']],
+            'Online Backup': [customer['Online Backup']],
+            'Device Protection': [customer['Device Protection']],
+            'Tech Support': [customer['Tech Support']],
+            'Streaming TV': [customer['Streaming TV']],
+            'Streaming Movies': [customer['Streaming Movies']],
+            'Contract': [customer['Contract']],
+            'Paperless Billing': [customer['Paperless Billing']],
+            'Payment Method': [customer['Payment Method']],
+            'Monthly Charges': [customer['Monthly Charges']],
+            'TotalCharges': [customer['Total Charges']]
         }
         
         df_input = pd.DataFrame(input_data)
@@ -136,10 +159,16 @@ def predict_churn(data: CustomerData):
 
         if probability > 0.50: 
             churn_risk = "ALTO" if probability > 0.75 else "MÉDIO"
+
             # Perfil mais rico para a IA
-            profile_summary = (f"{data.Gender}, Contrato {data.Contract}, "
-                             f"Internet {data.InternetService}, Pagamento {data.PaymentMethod}, "
-                             f"Gasto Mensal R${data.MonthlyCharges}")
+            profile_summary = (
+                f"{customer['Gender']}, "
+                f"Contrato {customer['Contract']}, "
+                f"Internet {customer['Internet Service']}, "
+                f"Pagamento {customer['Payment Method']}, "
+                f"Gasto Mensal R${customer['Monthly Charges']}"
+            )
+
             retention_plan = generate_retention_plan(probability, profile_summary)
 
         return {
@@ -152,29 +181,6 @@ def predict_churn(data: CustomerData):
     except Exception as e:
         print(f"ERRO: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-    
-class CustomerRequest(BaseModel):
-    customer_id: str
-
-def load_customers():
-    try:
-        return pd.read_excel(EXCEL_PATH)
-    except Exception as e:
-        raise RuntimeError(f"Erro ao ler planilha: {e}")
-
-@app.post("/customers")
-def get_customer(request: CustomerRequest):
-    df = load_customers()
-
-    customer = df[df["CustomerID"] == request.customer_id]
-
-    if customer.empty:
-        raise HTTPException(
-            status_code=404,
-            detail="CustomerID não encontrado"
-        )
-
-    return customer.iloc[0].to_dict()
 
 @app.get("/health")
 def health_check():
