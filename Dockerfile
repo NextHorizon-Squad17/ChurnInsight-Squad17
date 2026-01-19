@@ -11,6 +11,8 @@ COPY api/main.py .
 
 COPY model/churn_model_final.pkl .
 
+COPY dataset/Telco_customer_churn.xlsx .
+
 EXPOSE 8000
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
